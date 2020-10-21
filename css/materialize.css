@@ -4270,7 +4270,7 @@ nav.nav-extended .nav-wrapper {
 }
 
 nav.nav-extended .nav-content {
-  position: relative;
+  position: fixed;
   line-height: normal;
 }
 
