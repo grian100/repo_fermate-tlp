@@ -1247,7 +1247,7 @@
 }
 
 .light-green.lighten-1 {
-  background-color: #67a321 !important;
+  background-color: #8cca9e !important;
 }
 
 .light-green-text.text-lighten-1 {
@@ -2947,8 +2947,8 @@ ul.staggered-list li {
 
 .page-footer {
   padding-top: 20px;
-  color: #fff;
-  background-color: #ee6e73;
+  color: #8cca9e;
+  background-color: #8cca9e;
 }
 
 
@@ -5461,6 +5461,7 @@ button.btn-floating {
   line-height: 54px;
   font-size: 15px;
   padding: 0 28px;
+  color: #090a0a;
 }
 
 .btn-large i {
