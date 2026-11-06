@@ -54,6 +54,11 @@ Test, con pytest installato:
 python -m pytest tests
 ```
 
+## Licenza
+- <strong>Codice</strong> (HTML, CSS, JavaScript e script Python): [licenza MIT](LICENSE). Può essere usato, modificato e ridistribuito liberamente, anche per scopi commerciali, mantenendo l'avviso di copyright.
+- <strong>Dati</strong> (`data/`): non sono coperti dalla licenza MIT. Derivano dai dataset del Comune di Milano / ATM, rilasciati con licenza [Creative Commons Attribuzione (CC BY)](http://www.opendefinition.org/licenses/cc-by): chi li riutilizza deve citare la fonte, per esempio "Dati: Comune di Milano / ATM, CC BY". Rispetto agli originali i dati sono stati uniti in un solo file, con le linee separate in elenchi e le coordinate arrotondate a 6 decimali.
+- <strong>Mappa di base</strong>: © contributori di OpenStreetMap, dati con licenza [ODbL](https://www.openstreetmap.org/copyright).
+
 ## Correzioni rispetto alla prima versione
 - La dashboard Kibana richiedeva il login: chi visitava la pagina pubblica non poteva vederla. Ora la dashboard è nella pagina stessa e funziona su GitHub Pages senza servizi esterni a pagamento.
 - L'HTML aveva un contenitore non chiuso e un `</div>` di troppo. La navbar usava le classi di Materialize in modo errato.
