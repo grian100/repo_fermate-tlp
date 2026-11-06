@@ -1,14 +1,173 @@
-/* Custom Stylesheet */
-/**
- * Use this file to override Materialize files so you can update
- * the core Materialize files in the future
- *
- * Made By MaterializeCSS.com
- */
-
-.icon-block {
-  padding: 0 15px;
+:root {
+  --sfondo: #f4f6f3;
+  --pannello: #ffffff;
+  --testo: #1f2a1f;
+  --testo-tenue: #5b665b;
+  --bordo: #dde3dc;
+  --accento: #5a8f29;
+  --accento-tenue: #e5efdb;
+  --superficie: #2f6db5;
+  --barra: #8bb862;
+  --ombra: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
-.icon-block .material-icons {
-	font-size: inherit;
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sfondo: #141814;
+    --pannello: #1e241e;
+    --testo: #e6ebe5;
+    --testo-tenue: #a3ada2;
+    --bordo: #333c33;
+    --accento: #9ccc6b;
+    --accento-tenue: #2b3a22;
+    --superficie: #6fa3e8;
+    --barra: #6f9b47;
+    --ombra: none;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--sfondo);
+  color: var(--testo);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+a { color: var(--accento); }
+
+.contenitore {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.intestazione {
+  background: var(--pannello);
+  border-bottom: 4px solid var(--accento);
+  padding: 20px 0 16px;
+}
+.intestazione h1 { margin: 0; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 600; }
+.sottotitolo { margin: 4px 0 0; color: var(--testo-tenue); }
+
+main { padding-top: 16px; padding-bottom: 24px; }
+
+.indicatori {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+.indicatore, .pannello {
+  background: var(--pannello);
+  border: 1px solid var(--bordo);
+  border-radius: 8px;
+  box-shadow: var(--ombra);
+}
+.indicatore { padding: 12px 16px; display: flex; flex-direction: column; }
+.indicatore .valore { font-size: 1.8rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.indicatore .etichetta { color: var(--testo-tenue); font-size: 0.9rem; }
+
+.filtri {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 20px;
+  margin: 16px 0 8px;
+}
+.filtro { display: flex; flex-direction: column; gap: 4px; border: 0; margin: 0; padding: 0; }
+fieldset.filtro { flex-direction: row; gap: 16px; align-items: center; }
+fieldset.filtro legend { float: left; margin-right: 4px; font-weight: 600; }
+.filtro > label { font-weight: 600; }
+.filtro-testo { flex: 1 1 220px; }
+select, input[type="search"], .pulsante {
+  font: inherit;
+  padding: 6px 10px;
+  border: 1px solid var(--bordo);
+  border-radius: 6px;
+  background: var(--pannello);
+  color: var(--testo);
+  min-height: 38px;
+}
+select { min-width: 160px; }
+.pulsante { cursor: pointer; }
+.pulsante:hover { background: var(--accento-tenue); }
+
+.pallino { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
+.pallino.superficie { background: var(--superficie); }
+.pallino.metro { background: conic-gradient(#e3001b 0 20%, #00a650 0 40%, #f9b000 0 60%, #0075bf 0 80%, #9b4f96 0); }
+
+.stato { margin: 4px 0 12px; color: var(--testo-tenue); min-height: 1.5em; }
+.stato.errore { color: #c0392b; font-weight: 600; }
+
+.griglia {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .griglia { grid-template-columns: minmax(0, 1fr); }
+}
+
+.pannello { padding: 12px 16px; }
+.pannello h2 { margin: 0 0 4px; font-size: 1.05rem; }
+.pannello-mappa { padding: 8px; }
+#mappa { height: 620px; border-radius: 6px; }
+@media (max-width: 860px) { #mappa { height: 60vh; } }
+.colonna { display: grid; gap: 16px; }
+.nota { margin: 6px 0; color: var(--testo-tenue); font-size: 0.85rem; }
+
+.barre, .elenco { list-style: none; margin: 8px 0 0; padding: 0; }
+.barre li {
+  display: grid;
+  grid-template-columns: 4.5em 1fr 3.5em;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  padding: 2px 0;
+}
+.barre .nome { font-weight: 600; white-space: nowrap; }
+.barre .barra { height: 14px; background: var(--barra); border-radius: 3px; min-width: 2px; }
+.barre .numero { text-align: right; font-variant-numeric: tabular-nums; color: var(--testo-tenue); }
+.barre button {
+  all: unset;
+  display: contents;
+  cursor: pointer;
+}
+.barre li.cliccabile { cursor: pointer; border-radius: 4px; }
+.barre li.cliccabile:hover, .barre li.attiva { background: var(--accento-tenue); }
+.barre li.cliccabile:focus-visible { outline: 2px solid var(--accento); }
+
+.elenco li { padding: 6px 0; border-bottom: 1px solid var(--bordo); font-size: 0.9rem; }
+.elenco li:last-child { border-bottom: 0; }
+.elenco button {
+  font: inherit; color: var(--accento); background: none; border: 0; padding: 0;
+  cursor: pointer; text-align: left; font-weight: 600;
+}
+.elenco .linee { display: block; color: var(--testo-tenue); font-size: 0.8rem; }
+
+.descrizione { margin-top: 16px; }
+.descrizione p { margin: 6px 0; }
+
+.piede {
+  border-top: 1px solid var(--bordo);
+  padding: 16px 0;
+  color: var(--testo-tenue);
+  font-size: 0.85rem;
+}
+
+.popup-titolo { font-weight: 600; font-size: 1rem; }
+.popup-tipo { color: #5b665b; }
+.linea-badge {
+  display: inline-block;
+  min-width: 1.8em;
+  padding: 0 4px;
+  margin: 2px 2px 0 0;
+  border-radius: 3px;
+  background: #eef2ec;
+  color: #1f2a1f;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
 }

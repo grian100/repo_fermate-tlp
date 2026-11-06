@@ -1,0 +1,23 @@
+{
+  "scaricato_il": "2026-11-06",
+  "dataset": {
+    "superficie": {
+      "dataset": "ATM - Fermate linee di superficie urbane",
+      "pagina": "https://dati.comune.milano.it/dataset/ds534-atm-fermate-linee-di-superficie-urbane",
+      "licenza": "Creative Commons Attribution",
+      "aggiornato_sul_portale": "2026-07-24",
+      "url": "https://dati.comune.milano.it/dataset/ac494f5d-acd3-4fd3-8cfc-ed24f5c3d923/resource/7d21bd77-3ad1-4235-9a40-8a8cdfeb65a0/download/tpl_fermate.geojson",
+      "fermate": 4683,
+      "scartate": 0
+    },
+    "metro": {
+      "dataset": "ATM - Fermate linee metropolitane",
+      "pagina": "https://dati.comune.milano.it/dataset/ds535_atm-fermate-linee-metropolitane",
+      "licenza": "Creative Commons Attribution",
+      "aggiornato_sul_portale": "2026-07-24",
+      "url": "https://dati.comune.milano.it/dataset/b7344a8f-0ef5-424b-a902-f7f06e32dd67/resource/dd6a770a-b321-44f0-b58c-9725d84409bb/download/tpl_metrofermate.geojson",
+      "fermate": 130,
+      "scartate": 0
+    }
+  }
+}

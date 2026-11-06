@@ -1,83 +1,98 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-  <title>Dashboard fermate TPL</title>
-
-  <!-- CSS  -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fermate TPL Milano</title>
+  <meta name="description" content="Dashboard delle fermate di bus, tram, filobus e metropolitana di Milano, con dati aperti del Comune di Milano.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
+        integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  
-  <nav class="navbar-fixed light-green lighten-1" role="navigation" >
-    <div class="navbar-fixed container" >     
-      <a href="https://www.comune.milano.it/" target="_blank">
-        <img src="img/logo_milano_ori.png" class="responsive-img" width="120" height="55"/>
-      </a>
-      <ul class="nav-wrapper right">
-        <li>
-          <a href="https://www.amat-mi.it/it/" target="_blank">
-          <img src="img/Logo_AMAT_32.png" class="responsive-img" width="120" height="55"/></a>
-        </li>
-      </ul>
+  <header class="intestazione">
+    <div class="contenitore">
+      <h1>Fermate del trasporto pubblico locale di Milano</h1>
+      <p class="sottotitolo">Bus, tram, filobus e metropolitana: dove sono le fermate e quali linee vi passano.</p>
     </div>
-  </nav>
-  <div class="section no-pad-bot" id="index-banner">
-    <div class="container">
-      <br><br>
-      <h1 class="header center black-text">Fermate trasporto pubblico locale</h1>
-      <div class="row center">
-        <h5 class="header col s12 light">Cruscotto di visualizzazione delle fermate del TPL</h5>
+  </header>
+
+  <main class="contenitore">
+    <section class="indicatori" aria-label="Indicatori">
+      <div class="indicatore"><span class="valore" id="kpi-fermate">–</span><span class="etichetta">fermate visualizzate</span></div>
+      <div class="indicatore"><span class="valore" id="kpi-superficie">–</span><span class="etichetta">fermate di superficie</span></div>
+      <div class="indicatore"><span class="valore" id="kpi-metro">–</span><span class="etichetta">stazioni della metropolitana</span></div>
+      <div class="indicatore"><span class="valore" id="kpi-linee">–</span><span class="etichetta">linee in transito</span></div>
+    </section>
+
+    <section class="filtri" aria-label="Filtri">
+      <fieldset class="filtro">
+        <legend>Tipo</legend>
+        <label><input type="checkbox" id="filtro-superficie" checked> <span class="pallino superficie"></span> superficie</label>
+        <label><input type="checkbox" id="filtro-metro" checked> <span class="pallino metro"></span> metropolitana</label>
+      </fieldset>
+      <div class="filtro">
+        <label for="filtro-linea">Linea</label>
+        <select id="filtro-linea"><option value="">tutte le linee</option></select>
       </div>
-      <div class="row center">
-        <a href="https://7234aa7492f246d4aab8254e3b30f6f1.eu-central-1.aws.cloud.es.io:9243/s/contratto_tpl/app/kibana#/dashboard/a92e3350-071f-11eb-b9ea-4f13f1dfa9cd?embed=true&_g=()&_a=(description:'',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(isLayerTOCOpen:!t,mapCenter:(lat:45.46375,lon:9.18789,zoom:13.99),openTOCDetails:!()),gridData:(h:29,i:'10',w:28,x:15,y:0),id:a1590fc0-1b0f-11eb-b9ea-4f13f1dfa9cd,panelIndex:'10',title:'Mappa+punti+fermate+tpl',type:map,version:'7.2.1'),(embeddableConfig:(),gridData:(h:23,i:'11',w:10,x:5,y:0),id:'12dad8f0-1bcd-11eb-b9ea-4f13f1dfa9cd',panelIndex:'11',title:'Filtro+dati',type:visualization,version:'7.2.1'),(embeddableConfig:(),gridData:(h:6,i:'12',w:10,x:5,y:23),id:'0edc9b10-1eb3-11eb-b9ea-4f13f1dfa9cd',panelIndex:'12',title:'Numero+fermate+tpl',type:visualization,version:'7.2.1')),query:(language:kuery,query:''),timeRestore:!f,title:'Fermate+trasporto+pubblico+locale',viewMode:view)" height="600" width="800" target="_blank"
-        class="btn-large waves-effect waves-light white">vai al link</a>
+      <div class="filtro filtro-testo">
+        <label for="filtro-nome">Cerca fermata</label>
+        <input type="search" id="filtro-nome" placeholder="es. Duomo, Viale Monza" autocomplete="off">
       </div>
-      <br><br>
+      <button type="button" id="azzera" class="pulsante">Azzera filtri</button>
+    </section>
 
+    <p id="stato" class="stato" role="status">Caricamento dei dati…</p>
+
+    <div class="griglia">
+      <section class="pannello pannello-mappa" aria-label="Mappa delle fermate">
+        <div id="mappa"></div>
+        <p class="nota">Clic su una fermata per vedere le linee. Le stazioni della metropolitana hanno il colore della linea; quelle di interscambio hanno il bordo nero.</p>
+      </section>
+
+      <aside class="colonna">
+        <section class="pannello">
+          <h2>Linee con più fermate</h2>
+          <p class="nota">Le fermate dei due sensi di marcia sono contate separatamente. Clic su una linea per vederla sulla mappa.</p>
+          <ol id="classifica-linee" class="barre"></ol>
+        </section>
+        <section class="pannello">
+          <h2>Fermate per numero di linee</h2>
+          <ol id="distribuzione" class="barre"></ol>
+        </section>
+        <section class="pannello">
+          <h2>Fermate con più linee</h2>
+          <ol id="classifica-fermate" class="elenco"></ol>
+        </section>
+      </aside>
     </div>
-  </div>
 
+    <section class="pannello descrizione">
+      <h2>Descrizione dei dati</h2>
+      <p>I dati vengono dai dataset aperti del Comune di Milano
+        <a href="https://dati.comune.milano.it/dataset/ds534-atm-fermate-linee-di-superficie-urbane">ATM - Fermate linee di superficie urbane</a>
+        e <a href="https://dati.comune.milano.it/dataset/ds535_atm-fermate-linee-metropolitane">ATM - Fermate linee metropolitane</a>,
+        rilasciati con licenza <a href="https://creativecommons.org/licenses/by/4.0/deed.it">Creative Commons Attribuzione</a>.
+        Per ogni fermata riportano il codice ATM, il nome o l'ubicazione, le linee in transito e la posizione.
+        Le fermate di superficie comprendono anche quelle delle linee urbane nei comuni dell'area urbana.</p>
+      <p>I dataset aperti non contengono le informazioni su palina elettronica, pensilina e accessibilità delle fermate,
+        presenti nella prima versione di questa dashboard.</p>
+      <p id="aggiornamento"></p>
+    </section>
+  </main>
 
-  <div class="container">
-    <div class="section">
-
-      <!--   Icon Section   -->
-      <div class="row">
-        
-        <div class="center s12 m4">
-          <div class="center icon-block">
-            <h2 class="center light-black-text">
-              <i class="center material-icons">group</i>
-            </h2>
-            <h5 class="center">Descrizione del dato</h5>
-
-            <p class="light">Il dataset presentato tiene conto per anno delle fermate associate al comune di Milano ed ai comuni di area urbana. Completano
-              il set l'indicazione per ciascuna fermata della presenza della palina elettronica, presenza della pensilina, accessibilità motoria,
-              accessibilità acustica, accessibilità visiva, linee in transito, tipologia modale, numero giorni di utilizzo</p>
-          </div>
-        </div>
-
+  <footer class="piede">
+    <div class="contenitore">
+      Progetto dimostrativo, non ufficiale. Dati: Comune di Milano / ATM (CC BY). Mappa: © contributori di
+      <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.
+      Codice: <a href="https://github.com/grian100/repo_fermate-tlp">GitHub</a>.
     </div>
-    <br><br>
-  </div>
-
-  <footer class="page-footer">
-    <div class="container">
-       
-      </div>
-    </div>
-    
   </footer>
 
-
-  <!--  Scripts-->
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script src="js/materialize.js"></script>
-  <script src="js/init.js"></script>
-
-  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"
+          integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="js/dashboard.js"></script>
+</body>
 </html>
