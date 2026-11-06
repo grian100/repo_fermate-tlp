@@ -40,7 +40,8 @@ def test_dati_pubblicati():
     metro = {l for f in fermate if f["properties"]["tipo"] == "metro" for l in f["properties"]["linee"]}
     assert metro == {"1", "2", "3", "4", "5"}
     fonte = json.loads((ROOT / "data" / "fonte.json").read_text(encoding="utf-8"))
-    assert {d["fermate"] for d in fonte["dataset"].values()} == {tipi.count("superficie"), tipi.count("metro")}
+    assert fonte["dataset"]["superficie"]["fermate"] == tipi.count("superficie")
+    assert fonte["dataset"]["metro"]["fermate"] == tipi.count("metro")
 
 
 def test_script_dati_uguale_al_geojson(tmp_path):
@@ -54,3 +55,11 @@ def test_script_dati_uguale_al_geojson(tmp_path):
 
     prepara_dati.scrivi_script(tmp_path / "x.js", geojson, fonte)
     assert (tmp_path / "x.js").read_text(encoding="utf-8") == testo
+
+
+def test_municipi():
+    municipi = json.loads((ROOT / "data" / "municipi.geojson").read_text(encoding="utf-8"))["features"]
+    assert [m["properties"]["municipio"] for m in municipi] == list(range(1, 10))
+    # la superficie del Comune di Milano è di circa 182 km²
+    assert 180 < sum(m["properties"]["superficie_km2"] for m in municipi) < 183
+    assert all(m["geometry"]["type"] == "Polygon" for m in municipi)

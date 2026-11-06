@@ -244,7 +244,8 @@
   }
 
   function mostraAggiornamento(fonte) {
-    var date = Object.keys(fonte.dataset).map(function (k) { return fonte.dataset[k].aggiornato_sul_portale; });
+    var date = ["superficie", "metro"].filter(function (k) { return fonte.dataset[k]; })
+      .map(function (k) { return fonte.dataset[k].aggiornato_sul_portale; });
     el("aggiornamento").textContent = "Dati aggiornati sul portale il " +
       new Date(date.sort()[date.length - 1]).toLocaleDateString("it-IT") +
       ", scaricati il " + new Date(fonte.scaricato_il).toLocaleDateString("it-IT") + ".";

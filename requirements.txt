@@ -1,0 +1,7 @@
+# La dashboard e scripts/prepara_dati.py non richiedono librerie.
+# Servono solo per il notebook dei risultati e per i test:
+pandas>=1.5
+numpy>=1.23
+matplotlib>=3.6
+jupyterlab>=4
+pytest>=7

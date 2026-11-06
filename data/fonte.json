@@ -18,6 +18,14 @@
       "url": "https://dati.comune.milano.it/dataset/b7344a8f-0ef5-424b-a902-f7f06e32dd67/resource/dd6a770a-b321-44f0-b58c-9725d84409bb/download/tpl_metrofermate.geojson",
       "fermate": 130,
       "scartate": 0
+    },
+    "municipi": {
+      "dataset": "Territorio: superficie dei Municipi",
+      "pagina": "https://dati.comune.milano.it/dataset/ds379-infogeo-municipi-superficie",
+      "licenza": "Creative Commons Attribution",
+      "aggiornato_sul_portale": "2026-05-08",
+      "url": "https://dati.comune.milano.it/dataset/36ba21c2-8b48-43ce-bbe1-e236a8a49ff6/resource/99ecd085-0b04-4fb2-a66e-9795694d4fc4/download/ds379_municipi_label.geojson",
+      "municipi": 9
     }
   }
 }

@@ -19,6 +19,7 @@ Le linee della metropolitana sono indicate con M1–M5, perché nei dati hanno c
 |---|---|---|
 | [ATM - Fermate linee di superficie urbane](https://dati.comune.milano.it/dataset/ds534-atm-fermate-linee-di-superficie-urbane) (ds534) | codice ATM, ubicazione, linee e posizione delle fermate di bus, tram e filobus, comprese quelle nei comuni dell'area urbana | CC BY |
 | [ATM - Fermate linee metropolitane](https://dati.comune.milano.it/dataset/ds535_atm-fermate-linee-metropolitane) (ds535) | codice, nome, linee e posizione delle stazioni della metropolitana | CC BY |
+| [Territorio: superficie dei Municipi](https://dati.comune.milano.it/dataset/ds379-infogeo-municipi-superficie) (ds379) | confini e superficie dei 9 Municipi, usati nel notebook | CC BY |
 
 I due dataset sono uniti in `data/fermate.geojson`, con nome, tipo, linee e coordinate di ogni fermata. Il file `data/fonte.json` riporta le date di aggiornamento sul portale e di download.
 
@@ -33,11 +34,29 @@ repo_fermate-tlp/
 ├── data/
 │   ├── fermate.geojson      # fermate di superficie e metropolitana (per il riuso dei dati)
 │   ├── fermate.js           # gli stessi dati, caricati dalla pagina
+│   ├── municipi.geojson     # confini dei 9 Municipi, usati dal notebook
 │   └── fonte.json           # dataset di origine e date di aggiornamento
+├── notebooks/risultati.ipynb  # analisi dei dati, già eseguita
 ├── scripts/prepara_dati.py  # scarica e prepara i dati dal portale open data
-└── tests/test_prepara_dati.py
+├── tests/test_prepara_dati.py
+└── requirements.txt         # librerie per notebook e test
 ```
 La pagina usa solo [Leaflet](https://leafletjs.com/) per la mappa, caricato da cdnjs con controllo di integrità (SRI), e la mappa di base di [OpenStreetMap](https://www.openstreetmap.org/copyright).
+
+## Risultati
+L'analisi completa è nel notebook [`notebooks/risultati.ipynb`](notebooks/risultati.ipynb), già eseguito: su GitHub si vedono tabelle e grafici senza avviarlo. In sintesi:
+
+- <strong>Linee</strong>: una linea di superficie ha in mediana 45 fermate, contando le due direzioni. Le linee con più fermate sono il tram 19 (117) e il bus 151 (112).
+- <strong>Fermate</strong>: due fermate su tre (65%) sono servite da una sola linea e solo 124 (2,6%) da 4 linee o più. Il nodo di superficie con più linee è "Via Comasina dopo Via Teano" (8).
+- <strong>Metropolitana</strong>: 125 stazioni distinte e 9 interscambi. Nei dati 5 interscambi (Duomo, Cadorna, Loreto, Lotto, Sant'Ambrogio) sono record separati per linea, a meno di 250 m l'uno dall'altro: per questo i record sono 130. 21 stazioni sono in altri comuni, 14 delle quali sulla M2.
+- <strong>Territorio</strong>: un terzo delle fermate di superficie (1.590, il 34%) è fuori dal Comune di Milano. Nel Comune ci sono in media 17 fermate per km², da 28 nel Municipio 1 (centro) a meno di 10 nel Municipio 5 (sud).
+- <strong>Copertura della metropolitana</strong>: nel Comune il 49% delle fermate di superficie è entro 500 m in linea d'aria da una stazione, il 77% entro 1 km. La distanza mediana va da circa 250 m nel Municipio 1 a circa 950 m nel Municipio 5.
+
+Per aprire il notebook in locale, dalla cartella del progetto:
+```bash
+python -m pip install -r requirements.txt
+python -m jupyter lab notebooks/risultati.ipynb
+```
 
 ## Utilizzo
 ### Visualizzazione in locale
@@ -61,7 +80,7 @@ Per scaricare dal portale open data la versione più recente dei dati serve solo
 ```bash
 python scripts/prepara_dati.py
 ```
-Test, con pytest installato:
+Test (con le librerie di `requirements.txt`):
 ```bash
 python -m pytest tests
 ```

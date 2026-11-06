@@ -5,14 +5,16 @@ e le salva in un unico GeoJSON compatto per la dashboard.
 
 Dataset usati (licenza CC BY, Comune di Milano / ATM):
 - ds534 "ATM - Fermate linee di superficie urbane" (bus, tram, filobus);
-- ds535 "ATM - Fermate linee metropolitane".
+- ds535 "ATM - Fermate linee metropolitane";
+- ds379 "Territorio: superficie dei Municipi" (confini dei 9 Municipi, per il notebook).
 
 Produce:
 - data/fermate.geojson: una Feature per fermata con id, nome, tipo ("superficie" o "metro")
   e linee (lista);
 - data/fonte.json: dataset, link, licenza, data di aggiornamento sul portale e di download;
 - data/fermate.js: gli stessi dati come script JavaScript, caricato dalla dashboard. A differenza
-  di fetch, un tag <script> funziona anche aprendo index.html direttamente dal disco.
+  di fetch, un tag <script> funziona anche aprendo index.html direttamente dal disco;
+- data/municipi.geojson: confini dei Municipi con numero e superficie in km².
 
 Usa solo la libreria standard di Python.
 """
@@ -27,6 +29,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOGO = "https://dati.comune.milano.it/api/3/action/package_show?id="
+MUNICIPI = "ds379-infogeo-municipi-superficie"
 DATASET = {
     "superficie": {"id": "ds534-atm-fermate-linee-di-superficie-urbane", "campo_nome": "ubicazione"},
     "metro": {"id": "ds535_atm-fermate-linee-metropolitane", "campo_nome": "nome"},
@@ -85,6 +88,27 @@ def scrivi_script(percorso, collezione, fonte):
     percorso.write_text(contenuto, encoding="utf-8")
 
 
+def arrotonda(coordinate):
+    """Arrotonda ricorsivamente le coordinate di una geometria a 6 decimali."""
+    if isinstance(coordinate[0], (int, float)):
+        return [round(c, 6) for c in coordinate]
+    return [arrotonda(c) for c in coordinate]
+
+
+def normalizza_municipi(geojson):
+    """Municipi con numero e superficie (campo AREA del dataset, in m², convertito in km²)."""
+    municipi = []
+    for feature in geojson["features"]:
+        p, g = feature["properties"], feature["geometry"]
+        municipi.append({
+            "type": "Feature",
+            "properties": {"municipio": int(p["MUNICIPIO"]), "superficie_km2": round(p["AREA"] / 1e6, 3)},
+            "geometry": {"type": g["type"], "coordinates": arrotonda(g["coordinates"])},
+        })
+    municipi.sort(key=lambda f: f["properties"]["municipio"])
+    return {"type": "FeatureCollection", "features": municipi}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--uscita", type=Path, default=ROOT / "data")
@@ -102,6 +126,13 @@ def main(argv=None):
     collezione = {"type": "FeatureCollection", "features": features}
     (args.uscita / "fermate.geojson").write_text(
         json.dumps(collezione, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    info = metadati(MUNICIPI)
+    municipi = normalizza_municipi(scarica_json(info["url"]))
+    fonti["municipi"] = {**info, "municipi": len(municipi["features"])}
+    print(f"{info['dataset']}: {len(municipi['features'])} municipi")
+    (args.uscita / "municipi.geojson").write_text(
+        json.dumps(municipi, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
     fonte = {"scaricato_il": date.today().isoformat(), "dataset": fonti}
     (args.uscita / "fonte.json").write_text(json.dumps(fonte, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     scrivi_script(args.uscita / "fermate.js", collezione, fonte)
