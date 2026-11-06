@@ -10,7 +10,9 @@ Dataset usati (licenza CC BY, Comune di Milano / ATM):
 Produce:
 - data/fermate.geojson: una Feature per fermata con id, nome, tipo ("superficie" o "metro")
   e linee (lista);
-- data/fonte.json: dataset, link, licenza, data di aggiornamento sul portale e di download.
+- data/fonte.json: dataset, link, licenza, data di aggiornamento sul portale e di download;
+- data/fermate.js: gli stessi dati come script JavaScript, caricato dalla dashboard. A differenza
+  di fetch, un tag <script> funziona anche aprendo index.html direttamente dal disco.
 
 Usa solo la libreria standard di Python.
 """
@@ -75,6 +77,14 @@ def normalizza(geojson, tipo, campo_nome):
     return risultato, scartate
 
 
+def scrivi_script(percorso, collezione, fonte):
+    """Dati per la dashboard come variabili globali JavaScript (window.FERMATE, window.FONTE)."""
+    contenuto = ("// Generato da scripts/prepara_dati.py: non modificare a mano.\n"
+                 f"window.FONTE = {json.dumps(fonte, ensure_ascii=False)};\n"
+                 f"window.FERMATE = {json.dumps(collezione, ensure_ascii=False, separators=(',', ':'))};\n")
+    percorso.write_text(contenuto, encoding="utf-8")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--uscita", type=Path, default=ROOT / "data")
@@ -94,7 +104,8 @@ def main(argv=None):
         json.dumps(collezione, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     fonte = {"scaricato_il": date.today().isoformat(), "dataset": fonti}
     (args.uscita / "fonte.json").write_text(json.dumps(fonte, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Salvate {len(features)} fermate in {args.uscita / 'fermate.geojson'}")
+    scrivi_script(args.uscita / "fermate.js", collezione, fonte)
+    print(f"Salvate {len(features)} fermate in {args.uscita / 'fermate.geojson'} e fermate.js")
     return 0
 
 

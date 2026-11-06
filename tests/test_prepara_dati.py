@@ -41,3 +41,16 @@ def test_dati_pubblicati():
     assert metro == {"1", "2", "3", "4", "5"}
     fonte = json.loads((ROOT / "data" / "fonte.json").read_text(encoding="utf-8"))
     assert {d["fermate"] for d in fonte["dataset"].values()} == {tipi.count("superficie"), tipi.count("metro")}
+
+
+def test_script_dati_uguale_al_geojson(tmp_path):
+    # data/fermate.js (usato dalla pagina) deve contenere gli stessi dati di data/fermate.geojson
+    testo = (ROOT / "data" / "fermate.js").read_text(encoding="utf-8")
+    righe = dict(r.split(" = ", 1) for r in testo.splitlines() if r.startswith("window."))
+    geojson = json.loads((ROOT / "data" / "fermate.geojson").read_text(encoding="utf-8"))
+    fonte = json.loads((ROOT / "data" / "fonte.json").read_text(encoding="utf-8"))
+    assert json.loads(righe["window.FERMATE"].rstrip(";")) == geojson
+    assert json.loads(righe["window.FONTE"].rstrip(";")) == fonte
+
+    prepara_dati.scrivi_script(tmp_path / "x.js", geojson, fonte)
+    assert (tmp_path / "x.js").read_text(encoding="utf-8") == testo

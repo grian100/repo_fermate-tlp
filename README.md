@@ -31,7 +31,8 @@ repo_fermate-tlp/
 ├── css/style.css            # stile (tema chiaro e scuro)
 ├── js/dashboard.js          # mappa, filtri e grafici (JavaScript senza framework)
 ├── data/
-│   ├── fermate.geojson      # fermate di superficie e metropolitana
+│   ├── fermate.geojson      # fermate di superficie e metropolitana (per il riuso dei dati)
+│   ├── fermate.js           # gli stessi dati, caricati dalla pagina
 │   └── fonte.json           # dataset di origine e date di aggiornamento
 ├── scripts/prepara_dati.py  # scarica e prepara i dati dal portale open data
 └── tests/test_prepara_dati.py
@@ -39,13 +40,24 @@ repo_fermate-tlp/
 La pagina usa solo [Leaflet](https://leafletjs.com/) per la mappa, caricato da cdnjs con controllo di integrità (SRI), e la mappa di base di [OpenStreetMap](https://www.openstreetmap.org/copyright).
 
 ## Utilizzo
-La pagina legge i dati con `fetch`, che non funziona aprendo `index.html` direttamente come file. In locale serve un piccolo server, dalla cartella del progetto:
+### Visualizzazione in locale
+Basta scaricare il repository e aprire `index.html` con un doppio clic: la dashboard funziona direttamente dal disco, senza installare nulla né avviare un server. Per scaricarlo:
+```bash
+git clone https://github.com/grian100/repo_fermate-tlp.git
+```
+oppure da GitHub con *Code → Download ZIP*.
+
+Serve comunque la connessione a Internet per la libreria Leaflet e per la mappa di base di OpenStreetMap; i dati delle fermate sono invece nel repository.
+
+In alternativa si può usare un server locale, dalla cartella del progetto:
 ```bash
 python -m http.server 8000
 ```
-e poi http://localhost:8000.
+e poi aprire http://localhost:8000.
 
-Per aggiornare i dati dal portale open data, serve solo Python:
+### Aggiornamento dei dati
+
+Per scaricare dal portale open data la versione più recente dei dati serve solo Python:
 ```bash
 python scripts/prepara_dati.py
 ```

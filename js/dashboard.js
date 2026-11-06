@@ -250,18 +250,15 @@
       ", scaricati il " + new Date(fonte.scaricato_il).toLocaleDateString("it-IT") + ".";
   }
 
-  function json(percorso) {
-    return fetch(percorso).then(function (r) {
-      if (!r.ok) throw new Error(percorso + ": " + r.status);
-      return r.json();
-    });
-  }
-
-  json("data/fermate.geojson").then(carica).catch(function (errore) {
+  // I dati arrivano da data/fermate.js (window.FERMATE e window.FONTE), caricato con un tag
+  // <script>: funziona anche aprendo index.html dal disco, dove fetch viene bloccato dal browser
+  if (window.FERMATE) {
+    carica(window.FERMATE);
+    if (window.FONTE) mostraAggiornamento(window.FONTE);
+  } else {
     var stato = el("stato");
     stato.classList.add("errore");
-    stato.textContent = "Impossibile caricare i dati (" + errore.message + "). " +
-      "Se la pagina è aperta come file locale, avviare un server: python -m http.server";
-  });
-  json("data/fonte.json").then(mostraAggiornamento).catch(function () {});
+    stato.textContent = "Impossibile caricare i dati: manca il file data/fermate.js " +
+      "(si genera con: python scripts/prepara_dati.py).";
+  }
 })();
